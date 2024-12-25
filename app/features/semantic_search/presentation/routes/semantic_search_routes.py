@@ -3,9 +3,30 @@ import threading
 import time
 from typing import Union
 
-from fastapi import APIRouter
+from app.features.semantic_search.application.usecases.semantic_search_usecase import \
+    SemanticSearchUseCase
+from app.features.semantic_search.domain.services.semantic_search_service import \
+    SemanticSearchService
+from fastapi import APIRouter, Depends
 
 router = APIRouter()
+service = SemanticSearchService()
+
+
+def get_semantic_search_usecase():
+    return SemanticSearchUseCase(service)
+
+
+@router.post("/add-sentence")
+async def add_sentence(text: str, usecase: SemanticSearchUseCase = Depends(get_semantic_search_usecase)):
+    usecase.add_sentence(text)
+    return {"message": "Sentence added successfully"}
+
+
+@router.get("/find-intention")
+async def find_intention(query: str, usecase: SemanticSearchUseCase = Depends(get_semantic_search_usecase)):
+    intention = usecase.find_intention(query)
+    return {"intention": intention}
 
 
 @router.get("/")
