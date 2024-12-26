@@ -1,10 +1,15 @@
 # Variables
 DOCKER_COMPOSE = docker-compose
 PROJECT_NAME = my_project # Optional, replace with your project name
-SHELL_SCRIPT = scripts/issue_find_intention.sh
+ADD_SENTENCE_SCRIPT = scripts/issue_add_sentence.sh
+FIND_INTENTION_SCRIPT = scripts/issue_find_intention.sh
+RUN_SCRIPT = scripts/run.sh
 
 # Targets
-.PHONY: build up down logs clean rebuild call-api
+.PHONY: run build up down logs clean rebuild find-intention add-sentence
+
+run:
+	bash ${RUN_SCRIPT}
 
 # Run docker-compose up with build
 up:
@@ -30,6 +35,9 @@ build:
 rebuild: clean up
 
 
-call-api:
-	bash ${SHELL_SCRIPT}
+find-intention:
+	bash ${FIND_INTENTION_SCRIPT}
+
+add-sentence:
+	bash ${ADD_SENTENCE_SCRIPT}
 

@@ -9,6 +9,10 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 
 def init_opentelemetry():
+    APP_PROFILE = os.environ.get("APP_PROFILE", "local")
+    if APP_PROFILE == "local":
+        return
+
     OTEL_SERVICE_NAME = os.environ.get("OTEL_SERVICE_NAME", "fastapi-app")
     OTEL_EXPORTER_OTLP_ENDPOINT = os.environ.get(
         "OTEL_EXPORTER_OTLP_ENDPOINT", "http://jaeger:4317")
