@@ -35,23 +35,22 @@ class SemanticSearchService:
 
     def sync_find_intention(self, query: str) -> str:
         current_thread = threading.current_thread().native_id
-        print('[{}] find_intention for {}'.format(
-            current_thread, query))
+        print('[{}] find_intention '.format(
+            current_thread))
         querys = [query * 100 for _ in range(10)]
         start = time.time()
         query_embedding_vector = self.model.encode(querys)[0]
-        print('[{}] took {:.2f} seconds for find intention for {} '.format(
-            current_thread, time.time() - start, query))
+        print('[{}] took {:.2f} seconds for find intention'.format(
+            current_thread, time.time() - start))
         query_embedding = Embedding(vector=query_embedding_vector)
         most_similar_sentence = self.sentence_collection.find_most_similar(
             query_embedding)
         return most_similar_sentence.text
 
-    @cached(ttl=60)
     async def async_find_intention(self, query: str) -> str:
         current_thread = threading.current_thread().native_id
-        print('[{}] find_intention for {}'.format(
-            current_thread, query))
+        print('[{}] find_intention '.format(
+            current_thread))
         querys = [query * 100 for _ in range(10)]
         start = time.time()
         embeddings = await asyncio.to_thread(
@@ -60,7 +59,24 @@ class SemanticSearchService:
         print('[{}] took {:.2f} seconds for find intention for {} '.format(
             current_thread, time.time() - start, query))
         query_embedding = Embedding(vector=query_embedding_vector)
-        most_similar_sentence = self.sentence_collection.find_most_similar(
+        most_similar_sentence = await self.sentence_collection.async_find_most_similar(
+            query_embedding)
+        return most_similar_sentence.text
+
+    @cached(ttl=60)
+    async def async_find_intention_cached(self, query: str) -> str:
+        current_thread = threading.current_thread().native_id
+        print('[{}] find_intention'.format(
+            current_thread))
+        querys = [query * 100 for _ in range(10)]
+        start = time.time()
+        embeddings = await asyncio.to_thread(
+            self.model.encode, querys)
+        query_embedding_vector = embeddings[0]
+        print('[{}] took {:.2f} seconds for find intention '.format(
+            current_thread, time.time() - start, ))
+        query_embedding = Embedding(vector=query_embedding_vector)
+        most_similar_sentence = await self.sentence_collection.find_most_similar(
             query_embedding)
         return most_similar_sentence.text
 
@@ -88,6 +104,6 @@ class SemanticSearchService:
         print('[{}] took {:.2f} seconds for find intention for {} '.format(
             current_thread, time.time() - start, query))
         query_embedding = Embedding(vector=query_embedding_vector)
-        most_similar_sentence = self.sentence_collection.find_most_similar(
+        most_similar_sentence = await self.sentence_collection.find_most_similar(
             query_embedding)
         return most_similar_sentence.text
