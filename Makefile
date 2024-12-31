@@ -2,11 +2,12 @@
 DOCKER_COMPOSE = docker-compose
 PROJECT_NAME = my_project # Optional, replace with your project name
 ADD_SENTENCE_SCRIPT = scripts/issue_add_sentence.sh
-FIND_INTENTION_SCRIPT = scripts/issue_find_intention.sh
+SYNC_FIND_INTENTION_SCRIPT = scripts/issue_sync_find_intention.sh
+ASYNC_FIND_INTENTION_SCRIPT = scripts/issue_async_find_intention.sh
 RUN_SCRIPT = scripts/run.sh
 
 # Targets
-.PHONY: run build up down logs clean rebuild find-intention add-sentence
+.PHONY: run build up down logs clean rebuild sync-find-intention async-find-intention add-sentence
 
 run:
 	bash ${RUN_SCRIPT}
@@ -35,8 +36,11 @@ build:
 rebuild: clean up
 
 
-find-intention:
-	bash ${FIND_INTENTION_SCRIPT}
+sync-find-intention:
+	bash ${SYNC_FIND_INTENTION_SCRIPT}
+
+async-find-intention:
+	bash ${ASYNC_FIND_INTENTION_SCRIPT}
 
 add-sentence:
 	bash ${ADD_SENTENCE_SCRIPT}
