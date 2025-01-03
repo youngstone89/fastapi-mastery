@@ -23,9 +23,21 @@ async def add_sentence(text: str, usecase: SemanticSearchUseCase = Depends(get_s
     return {"message": "Sentence added successfully"}
 
 
-@router.get("/find-intention")
-async def find_intention(query: str, usecase: SemanticSearchUseCase = Depends(get_semantic_search_usecase)):
-    intention = usecase.find_intention(query)
+@router.get("/async-find-intention")
+async def async_find_intention(query: str, usecase: SemanticSearchUseCase = Depends(get_semantic_search_usecase)):
+    current_thread = threading.current_thread()
+    print('async_find_intention[{}] received request'.format(
+        current_thread.native_id))
+    intention = await usecase.async_find_intention(query)
+    return {"intention": intention}
+
+
+@router.get("/sync-find-intention")
+async def sync_find_intention(query: str, usecase: SemanticSearchUseCase = Depends(get_semantic_search_usecase)):
+    current_thread = threading.current_thread()
+    print('sync_find_intention[{}] received request'.format(
+        current_thread.native_id))
+    intention = await usecase.sync_find_intention(query)
     return {"intention": intention}
 
 

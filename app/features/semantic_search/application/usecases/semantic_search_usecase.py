@@ -10,5 +10,8 @@ class SemanticSearchUseCase:
     def add_sentence(self, text: str):
         self.service.add_sentence(text)
 
-    def find_intention(self, query: str) -> str:
-        return self.service.find_intention(query)
+    async def sync_find_intention(self, query: str) -> str:
+        return self.service.sync_find_intention(query)
+
+    async def async_find_intention(self, query: str) -> str:
+        return await self.service.async_find_intention(query)
