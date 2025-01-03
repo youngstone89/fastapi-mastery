@@ -3,6 +3,8 @@ import threading
 import time
 from typing import Union
 
+from pydantic import BaseModel
+
 from app.features.semantic_search.application.usecases.semantic_search_usecase import \
     SemanticSearchUseCase
 from app.features.semantic_search.domain.services.semantic_search_service import \
@@ -16,10 +18,12 @@ service = SemanticSearchService()
 def get_semantic_search_usecase():
     return SemanticSearchUseCase(service)
 
-
+class SentenceInput(BaseModel):
+    text: str
+    
 @router.post("/add-sentence")
-async def add_sentence(text: str, usecase: SemanticSearchUseCase = Depends(get_semantic_search_usecase)):
-    usecase.add_sentence(text)
+async def add_sentence(input: SentenceInput, usecase: SemanticSearchUseCase = Depends(get_semantic_search_usecase)):
+    usecase.add_sentence(input.text)
     return {"message": "Sentence added successfully"}
 
 
